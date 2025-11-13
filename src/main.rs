@@ -1,6 +1,8 @@
 use std::env::args;
-use std::fs;
 use std::process;
+use std::error::Error;
+use std::fs;
+use mini_grep::search;
 
 struct Config {
     query: String,
@@ -18,15 +20,22 @@ impl Config {
 fn main() {
     println!("...:::mini-grep:::...");
     let args: Vec<String> = args().collect();
+
     let config = Config::build(&args).unwrap_or_else(|err| {
         println!("problem parsing arguments: {err}");
         process::exit(1);
     });
-    println!("Searching for query: {}", config.query);
-    println!("In file: {}", config.file_path);
 
-    let content = fs::read_to_string(config.file_path)
-            .expect("should have been able to read this file");
+    if let Err(err) = run(config) {
+         println!("problem parsing arguments: {err}");
+        process::exit(1);
+    }
+    
+}
 
-    println!("{content}");
+fn run(config: Config) ->Result<(), Box<dyn Error>> {
+    let content = fs::read_to_string(config.file_path)?;
+    let result = search(&config.query, &content);
+    println!("{:?}", result);
+    Ok(())
 }
