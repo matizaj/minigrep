@@ -2,7 +2,7 @@ use std::env::{args, var};
 use std::process;
 use std::error::Error;
 use std::fs;
-use mini_grep::{search, search_case_insensitive};
+use matizaj_mini_grep::{search, search_case_insensitive};
 
 struct Config {
     query: String,
