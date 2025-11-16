@@ -11,19 +11,26 @@ struct Config {
 }
 
 impl Config {
-    fn build(args: &[String]) -> Result<Config, &str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+        let query = match args.next() {
+            Some(q) => q,
+            None => return Err("dont receive query string!")
+        };
+
+        let file_path = match args.next() {
+            Some(path) => path,
+            None => return Err("path to file not specified!")
+        };
+
         let ignore_case = var("IGNORE_CASE").is_ok();
-        return Ok(Config{query: args[1].clone(), file_path: args[2].clone(), ignore_case});
+        Ok(Config{query, file_path, ignore_case})
     }
 }
 fn main() {
     println!("...:::mini-grep:::...");
-    let args: Vec<String> = args().collect();
 
-    let config = Config::build(&args).unwrap_or_else(|err| {
+    let config = Config::build(args()).unwrap_or_else(|err| {
         eprintln!("problem parsing arguments: {err}");
         process::exit(1);
     });
