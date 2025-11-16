@@ -1,5 +1,5 @@
 [package]
-name = "mini-grep"
+name = "matizaj-mini-grep"
 description = "learning project mimic grep functionality"
 license = "MIT"
 version = "0.1.0"
